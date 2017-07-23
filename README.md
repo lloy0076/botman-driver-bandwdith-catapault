@@ -2,6 +2,11 @@
 
 BotMan driver to connect Nexmo with [BotMan](https://github.com/botman/botman)
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/botman/driver-nexmo.svg?style=flat-square)](https://packagist.org/packages/botman/driver-nexmo)
+[![Build Status](https://travis-ci.org/botman/driver-nexmo.svg?branch=master)](https://travis-ci.org/botman/driver-nexmo)
+[![codecov](https://codecov.io/gh/botman/driver-nexmo/branch/master/graph/badge.svg)](https://codecov.io/gh/botman/driver-nexmo)
+
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
