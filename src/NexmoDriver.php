@@ -66,6 +66,7 @@ class NexmoDriver extends HttpDriver
                 new IncomingMessage($this->event->get('text'), $this->event->get('msisdn'), $this->event->get('to'), $this->payload),
             ];
         }
+
         return $this->messages;
     }
 

@@ -2,14 +2,14 @@
 
 namespace Tests;
 
+use Mockery as m;
 use BotMan\BotMan\Http\Curl;
+use PHPUnit_Framework_TestCase;
+use BotMan\Drivers\Nexmo\NexmoDriver;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use Symfony\Component\HttpFoundation\Request;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
-use BotMan\BotMan\Messages\Outgoing\Question;
-use BotMan\Drivers\Nexmo\NexmoDriver;
-use Mockery as m;
-use PHPUnit_Framework_TestCase;
-use Symfony\Component\HttpFoundation\Request;
 
 class NexmoDriverTest extends PHPUnit_Framework_TestCase
 {
@@ -180,7 +180,7 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'nexmo' => [
                 'app_key' => 'key',
                 'app_secret' => 'secret',
-            ]
+            ],
         ], $htmlInterface);
         $this->assertTrue($driver->isConfigured());
     }
@@ -196,42 +196,42 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'nexmo' => [
                 'app_key' => 'key',
                 'app_secret' => 'secret',
-            ]
+            ],
         ], $htmlInterface);
-        
+
         $incomingMessage = new IncomingMessage('text', '123456', '987654');
 
         $message = 'string';
         $payload = $driver->buildServicePayload($message, $incomingMessage);
-        
+
         $this->assertSame([
             'api_key' => 'key',
             'api_secret' => 'secret',
             'to' => '123456',
             'from' => '987654',
-            'text' => 'string'
+            'text' => 'string',
         ], $payload);
 
         $message = new OutgoingMessage('message object');
         $payload = $driver->buildServicePayload($message, $incomingMessage);
-        
+
         $this->assertSame([
             'api_key' => 'key',
             'api_secret' => 'secret',
             'to' => '123456',
             'from' => '987654',
-            'text' => 'message object'
+            'text' => 'message object',
         ], $payload);
 
         $message = new Question('question object');
         $payload = $driver->buildServicePayload($message, $incomingMessage);
-        
+
         $this->assertSame([
             'api_key' => 'key',
             'api_secret' => 'secret',
             'to' => '123456',
             'from' => '987654',
-            'text' => 'question object'
+            'text' => 'question object',
         ], $payload);
     }
 
@@ -246,7 +246,7 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'nexmo' => [
                 'app_key' => 'key',
                 'app_secret' => 'secret',
-            ]
+            ],
         ], $htmlInterface);
 
         $payload = [
@@ -254,13 +254,13 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'api_secret' => 'secret',
             'to' => '123456',
             'from' => '987654',
-            'text' => 'string'
+            'text' => 'string',
         ];
 
         $htmlInterface->shouldReceive('post')
             ->once()
             ->with('https://rest.nexmo.com/sms/json?'.http_build_query($payload));
-        
+
         $driver->sendPayload($payload);
     }
 
@@ -275,13 +275,13 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'nexmo' => [
                 'app_key' => 'key',
                 'app_secret' => 'secret',
-            ]
+            ],
         ], $htmlInterface);
 
         $parameters = [
             'to' => '123456',
             'from' => '987654',
-            'text' => 'string'
+            'text' => 'string',
         ];
 
         $payload = [
@@ -289,13 +289,13 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'api_secret' => 'secret',
             'to' => '123456',
             'from' => '987654',
-            'text' => 'string'
+            'text' => 'string',
         ];
 
         $htmlInterface->shouldReceive('post')
             ->once()
             ->with('https://rest.nexmo.com/foo/json?'.http_build_query($payload));
-        
+
         $incomingMessage = new IncomingMessage('text', '123456', '987654');
         $driver->sendRequest('foo/json', $payload, $incomingMessage);
     }
@@ -311,9 +311,9 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'nexmo' => [
                 'app_key' => 'key',
                 'app_secret' => 'secret',
-            ]
+            ],
         ], $htmlInterface);
-        
+
         $incomingMessage = new IncomingMessage('text', '123456', '987654');
         $answer = $driver->getConversationAnswer($incomingMessage);
 
