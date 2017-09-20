@@ -2,10 +2,13 @@
 
 namespace Tests;
 
-use Mockery as m;
 use BotMan\BotMan\Http\Curl;
-use PHPUnit_Framework_TestCase;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Nexmo\NexmoDriver;
+use Mockery as m;
+use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class NexmoDriverTest extends PHPUnit_Framework_TestCase
@@ -65,6 +68,23 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
             'message_timestamp' => '2016-11-30 19:27:46',
         ]);
         $this->assertTrue(is_array($driver->getMessages()));
+    }
+
+    /** @test */
+    public function it_returns_the_messages_by_reference()
+    {
+        $driver = $this->getDriver([
+            'msisdn' => '491762012309022505',
+            'to' => '4176260130298',
+            'messageId' => '0C000000075069C7',
+            'text' => 'Hi Julia',
+            'type' => 'text',
+            'keyword' => 'HEY',
+            'message_timestamp' => '2016-11-30 19:27:46',
+        ]);
+        $hash = spl_object_hash($driver->getMessages()[0]);
+
+        $this->assertSame($hash, spl_object_hash($driver->getMessages()[0]));
     }
 
     /** @test */
@@ -157,21 +177,146 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
         $htmlInterface = m::mock(Curl::class);
 
         $driver = new NexmoDriver($request, [
-            'nexmo_key' => 'key',
-            'nexmo_secret' => 'secret',
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+            ]
         ], $htmlInterface);
-
         $this->assertTrue($driver->isConfigured());
+    }
+
+    /** @test */
+    public function it_can_build_payload()
+    {
+        $request = m::mock(Request::class.'[getContent]');
+        $request->shouldReceive('getContent')->andReturn('');
+        $htmlInterface = m::mock(Curl::class);
 
         $driver = new NexmoDriver($request, [
-            'nexmo_key' => null,
-            'nexmo_secret' => null,
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+            ]
+        ], $htmlInterface);
+        
+        $incomingMessage = new IncomingMessage('text', '123456', '987654');
+
+        $message = 'string';
+        $payload = $driver->buildServicePayload($message, $incomingMessage);
+        
+        $this->assertSame([
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => '987654',
+            'text' => 'string'
+        ], $payload);
+
+        $message = new OutgoingMessage('message object');
+        $payload = $driver->buildServicePayload($message, $incomingMessage);
+        
+        $this->assertSame([
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => '987654',
+            'text' => 'message object'
+        ], $payload);
+
+        $message = new Question('question object');
+        $payload = $driver->buildServicePayload($message, $incomingMessage);
+        
+        $this->assertSame([
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => '987654',
+            'text' => 'question object'
+        ], $payload);
+    }
+
+    /** @test */
+    public function it_can_send_payload()
+    {
+        $request = m::mock(Request::class.'[getContent]');
+        $request->shouldReceive('getContent')->andReturn('');
+        $htmlInterface = m::mock(Curl::class);
+
+        $driver = new NexmoDriver($request, [
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+            ]
         ], $htmlInterface);
 
-        $this->assertFalse($driver->isConfigured());
+        $payload = [
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => '987654',
+            'text' => 'string'
+        ];
 
-        $driver = new NexmoDriver($request, [], $htmlInterface);
+        $htmlInterface->shouldReceive('post')
+            ->once()
+            ->with('https://rest.nexmo.com/sms/json?'.http_build_query($payload));
+        
+        $driver->sendPayload($payload);
+    }
 
-        $this->assertFalse($driver->isConfigured());
+    /** @test */
+    public function it_can_send_requests()
+    {
+        $request = m::mock(Request::class.'[getContent]');
+        $request->shouldReceive('getContent')->andReturn('');
+        $htmlInterface = m::mock(Curl::class);
+
+        $driver = new NexmoDriver($request, [
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+            ]
+        ], $htmlInterface);
+
+        $parameters = [
+            'to' => '123456',
+            'from' => '987654',
+            'text' => 'string'
+        ];
+
+        $payload = [
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => '987654',
+            'text' => 'string'
+        ];
+
+        $htmlInterface->shouldReceive('post')
+            ->once()
+            ->with('https://rest.nexmo.com/foo/json?'.http_build_query($payload));
+        
+        $incomingMessage = new IncomingMessage('text', '123456', '987654');
+        $driver->sendRequest('foo/json', $payload, $incomingMessage);
+    }
+
+    /** @test */
+    public function it_can_get_conversation_answers()
+    {
+        $request = m::mock(Request::class.'[getContent]');
+        $request->shouldReceive('getContent')->andReturn('');
+        $htmlInterface = m::mock(Curl::class);
+
+        $driver = new NexmoDriver($request, [
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+            ]
+        ], $htmlInterface);
+        
+        $incomingMessage = new IncomingMessage('text', '123456', '987654');
+        $answer = $driver->getConversationAnswer($incomingMessage);
+
+        $this->assertSame('text', $answer->getText());
     }
 }

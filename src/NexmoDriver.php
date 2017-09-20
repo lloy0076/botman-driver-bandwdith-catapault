@@ -23,6 +23,7 @@ class NexmoDriver extends HttpDriver
     {
         $this->payload = $request->request->all();
         $this->event = Collection::make($this->payload);
+        $this->config = Collection::make($this->config->get('nexmo', []));
     }
 
     /**
@@ -60,9 +61,12 @@ class NexmoDriver extends HttpDriver
      */
     public function getMessages()
     {
-        return [
-            new IncomingMessage($this->event->get('text'), $this->event->get('msisdn'), $this->event->get('to'), $this->payload),
-        ];
+        if (empty($this->messages)) {
+            $this->messages = [
+                new IncomingMessage($this->event->get('text'), $this->event->get('msisdn'), $this->event->get('to'), $this->payload),
+            ];
+        }
+        return $this->messages;
     }
 
     /**
@@ -82,8 +86,8 @@ class NexmoDriver extends HttpDriver
     public function buildServicePayload($message, $matchingMessage, $additionalParameters = [])
     {
         $parameters = array_merge_recursive([
-            'api_key' => $this->config->get('nexmo_key'),
-            'api_secret' => $this->config->get('nexmo_secret'),
+            'api_key' => $this->config->get('app_key'),
+            'api_secret' => $this->config->get('app_secret'),
             'to' => $matchingMessage->getSender(),
             'from' => $matchingMessage->getRecipient(),
         ], $additionalParameters);
@@ -116,7 +120,7 @@ class NexmoDriver extends HttpDriver
      */
     public function isConfigured()
     {
-        return ! empty($this->config->get('nexmo_key')) && ! empty($this->config->get('nexmo_secret'));
+        return ! empty($this->config->get('app_key')) && ! empty($this->config->get('app_secret'));
     }
 
     /**
@@ -130,8 +134,8 @@ class NexmoDriver extends HttpDriver
     public function sendRequest($endpoint, array $parameters, IncomingMessage $matchingMessage)
     {
         $parameters = array_replace_recursive([
-            'api_key' => $this->config->get('nexmo_key'),
-            'api_secret' => $this->config->get('nexmo_secret'),
+            'api_key' => $this->config->get('app_key'),
+            'api_secret' => $this->config->get('app_secret'),
         ], $parameters);
 
         return $this->http->post('https://rest.nexmo.com/'.$endpoint.'?'.http_build_query($parameters));
