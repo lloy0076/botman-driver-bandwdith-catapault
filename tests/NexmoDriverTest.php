@@ -236,6 +236,65 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_can_build_payload_with_additional_parameters()
+    {
+        $request = m::mock(Request::class.'[getContent]');
+        $request->shouldReceive('getContent')->andReturn('');
+        $htmlInterface = m::mock(Curl::class);
+
+        $driver = new NexmoDriver($request, [
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+            ],
+        ], $htmlInterface);
+
+        $incomingMessage = new IncomingMessage('text', '123456', '987654');
+
+        $message = 'string';
+        $payload = $driver->buildServicePayload($message, $incomingMessage, [
+            'from' => 'custom'
+        ]);
+
+        $this->assertSame([
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => 'custom',
+            'text' => 'string',
+        ], $payload);
+    }
+
+    /** @test */
+    public function it_uses_fallback_from_number()
+    {
+        $request = m::mock(Request::class.'[getContent]');
+        $request->shouldReceive('getContent')->andReturn('');
+        $htmlInterface = m::mock(Curl::class);
+
+        $driver = new NexmoDriver($request, [
+            'nexmo' => [
+                'app_key' => 'key',
+                'app_secret' => 'secret',
+                'sender' => '004912345',
+            ],
+        ], $htmlInterface);
+
+        $incomingMessage = new IncomingMessage('text', '123456', '');
+
+        $message = 'string';
+        $payload = $driver->buildServicePayload($message, $incomingMessage);
+
+        $this->assertSame([
+            'api_key' => 'key',
+            'api_secret' => 'secret',
+            'to' => '123456',
+            'from' => '004912345',
+            'text' => 'string',
+        ], $payload);
+    }
+
+    /** @test */
     public function it_can_send_payload()
     {
         $request = m::mock(Request::class.'[getContent]');

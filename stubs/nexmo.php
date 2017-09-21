@@ -21,4 +21,14 @@ return [
     |
     */
     'app_secret' => env('NEXMO_SECRET'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default sender number
+    |--------------------------------------------------------------------------
+    |
+    | This is the phone number to use when originating messages/conversations.
+    |
+    */
+    'sender' => env('NEXMO_SENDER'),
 ];

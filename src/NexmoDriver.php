@@ -86,11 +86,16 @@ class NexmoDriver extends HttpDriver
      */
     public function buildServicePayload($message, $matchingMessage, $additionalParameters = [])
     {
-        $parameters = array_merge_recursive([
+        $recipient = $matchingMessage->getRecipient();
+        if ($recipient === '' || is_null($recipient)) {
+            $recipient = $this->config->get('sender');
+        }
+
+        $parameters = array_merge([
             'api_key' => $this->config->get('app_key'),
             'api_secret' => $this->config->get('app_secret'),
             'to' => $matchingMessage->getSender(),
-            'from' => $matchingMessage->getRecipient(),
+            'from' => $recipient,
         ], $additionalParameters);
         /*
          * If we send a Question with buttons, ignore
