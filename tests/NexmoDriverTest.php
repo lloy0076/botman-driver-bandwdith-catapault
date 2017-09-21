@@ -253,7 +253,7 @@ class NexmoDriverTest extends PHPUnit_Framework_TestCase
 
         $message = 'string';
         $payload = $driver->buildServicePayload($message, $incomingMessage, [
-            'from' => 'custom'
+            'from' => 'custom',
         ]);
 
         $this->assertSame([
