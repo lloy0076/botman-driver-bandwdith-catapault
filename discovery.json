@@ -1,8 +1,8 @@
 {
     "botman/driver-config": [
-        "stubs/nexmo.php"
+        "stubs/catapault.php"
     ],
     "botman/driver": [
-        "BotMan\\Drivers\\Nexmo\\NexmoDriver"
+        "DSL\\Drivers\\Catapault\\CatapaultDriver"
     ]
 }

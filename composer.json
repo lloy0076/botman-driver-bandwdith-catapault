@@ -1,17 +1,19 @@
 {
-    "name": "botman/driver-nexmo",
+    "name": "lloy0076/botman-driver-catapault",
     "license": "MIT",
-    "description": "Nexmo driver for BotMan",
+    "description": "Catapault (Bandwidth) driver for BotMan",
     "keywords": [
         "Bot",
         "BotMan",
-        "Nexmo"
+        "Catapault",
+        "Bandwidth",
+        "Bandwidthcom"
     ],
-    "homepage": "http://github.com/botman/driver-nexmo",
+    "homepage": "http://github.com/lloy0076/botman-driver-catapault",
     "authors": [
         {
-            "name": "Marcel Pociot",
-            "email": "m.pociot@gmail.com"
+            "name": "David Lloyd",
+            "email": "jwickentower@gmail.com"
         }
     ],
     "require": {
@@ -25,7 +27,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BotMan\\Drivers\\Nexmo\\": "src/"
+            "DSL\\Drivers\\Catapault\\": "src/"
         }
     },
     "autoload-dev": {

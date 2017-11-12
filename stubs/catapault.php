@@ -7,20 +7,30 @@ return [
     | App Key
     |--------------------------------------------------------------------------
     |
-    | Your Nexmo App key.
+    | Your Bandwidth User ID.
     |
     */
-    'app_key' => env('NEXMO_KEY'),
+    'user_id' => env('CATAPAULT_USER_ID'),
 
     /*
     |--------------------------------------------------------------------------
     | App Key
     |--------------------------------------------------------------------------
     |
-    | Your Nexmo App secret.
+    | Your Bandwidth App Token
     |
     */
-    'app_secret' => env('NEXMO_SECRET'),
+    'app_key' => env('CATAPAULT_KEY'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | App Key
+    |--------------------------------------------------------------------------
+    |
+    | Your Bandwidth App Secret.
+    |
+    */
+    'app_secret' => env('CATAPAULT_SECRET'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,5 +40,5 @@ return [
     | This is the phone number to use when originating messages/conversations.
     |
     */
-    'sender' => env('NEXMO_SENDER'),
+    'sender' => env('CATAPAULT_SENDER'),
 ];
