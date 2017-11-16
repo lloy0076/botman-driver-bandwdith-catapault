@@ -1,6 +1,6 @@
 <?php
 
-namespace DSL\Drivers\Catapault;
+namespace DSL\Drivers\Catapult;
 
 use BotMan\BotMan\Drivers\HttpDriver;
 use BotMan\BotMan\Messages\Incoming\Answer;
@@ -12,9 +12,23 @@ use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CatapaultDriver extends HttpDriver
+class CatapultDriver extends HttpDriver
 {
-    const DRIVER_NAME = 'Catapault';
+    const DRIVER_NAME = 'Catapult';
+
+    protected $incomingKeys =
+        [
+            'eventType',
+            'direction',
+            'messageId',
+            'messageUri',
+            'from',
+            'to',
+            'text',
+            'applicationId',
+            'time',
+            'state',
+        ];
 
     /**
      * The chat messages.
@@ -28,7 +42,7 @@ class CatapaultDriver extends HttpDriver
     {
         $this->payload = $request->request->all();
         $this->event   = Collection::make($this->payload);
-        $this->config  = Collection::make($this->config->get('catapault', []));
+        $this->config  = Collection::make($this->config->get('catapult', []));
     }
 
     /**
@@ -47,7 +61,22 @@ class CatapaultDriver extends HttpDriver
      */
     public function matchesRequest()
     {
-        throw new \BadMethodCallException(sprintf('%s is not yet implemented.', __METHOD__));
+        $payloadKeys    = array_keys($this->payload);
+        $expectedValues = array_values($this->incomingKeys);
+
+        $diff = array_diff($expectedValues, $payloadKeys);
+
+        if (count($diff) !== 0) {
+            return false;
+        }
+
+        $messageUri = $this->payload['messageUri'];
+
+        if (strpos($messageUri, 'api.catapult.inetwork.com') === false) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -69,7 +98,7 @@ class CatapaultDriver extends HttpDriver
         if (empty($this->messages)) {
             $this->messages = [
                 new IncomingMessage($this->event->get('text'),
-                    $this->event->get('msisdn'),
+                    $this->event->get('from'),
                     $this->event->get('to'),
                     $this->payload),
             ];
@@ -99,13 +128,16 @@ class CatapaultDriver extends HttpDriver
             $recipient = $this->config->get('sender');
         }
 
-        $parameters = array_merge([
-            'api_key'    => $this->config->get('app_key'),
-            'api_secret' => $this->config->get('app_secret'),
-            'to'         => $matchingMessage->getSender(),
-            'from'       => $recipient,
-        ],
+        $parameters = array_merge(
+            [
+                'user_id'    => $this->config->get('user_id'),
+                'app_token'  => $this->config->get('app_token'),
+                'app_secret' => $this->config->get('app_secret'),
+                'to'         => $matchingMessage->getSender(),
+                'from'       => $recipient,
+            ],
             $additionalParameters);
+
         /*
          * If we send a Question with buttons, ignore
          * the text and append the question.
@@ -136,8 +168,8 @@ class CatapaultDriver extends HttpDriver
     public function isConfigured()
     {
         return !empty($this->config->get('user_id')) &&
-            !empty($this->config->get('api_token')) &&
-            !empty($this->config->get('api_secret'));
+            !empty($this->config->get('app_token')) &&
+            !empty($this->config->get('app_secret'));
     }
 
     /**
@@ -150,11 +182,12 @@ class CatapaultDriver extends HttpDriver
      */
     public function sendRequest($endpoint, array $parameters, IncomingMessage $matchingMessage)
     {
-        $parameters = array_replace_recursive([
-            'user_id'    => $this->config->get('user_id'),
-            'api_token'  => $this->config->get('app_token'),
-            'api_secret' => $this->config->get('app_secret'),
-        ],
+        $parameters = array_replace_recursive(
+            [
+                'user_id'    => $this->config->get('user_id'),
+                'api_token'  => $this->config->get('app_token'),
+                'api_secret' => $this->config->get('app_secret'),
+            ],
             $parameters);
 
         throw new \BadMethodCallException(sprintf('%s is not yet implemented.'), __METHOD__);

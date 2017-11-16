@@ -10,7 +10,7 @@ return [
     | Your Bandwidth User ID.
     |
     */
-    'user_id' => env('CATAPAULT_USER_ID'),
+    'user_id' => env('CATAPULT_USER_ID'),
 
     /*
     |--------------------------------------------------------------------------
@@ -20,7 +20,7 @@ return [
     | Your Bandwidth App Token
     |
     */
-    'app_key' => env('CATAPAULT_KEY'),
+    'app_key' => env('CATAPULT_KEY'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ return [
     | Your Bandwidth App Secret.
     |
     */
-    'app_secret' => env('CATAPAULT_SECRET'),
+    'app_secret' => env('CATAPULT_SECRET'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,5 +40,5 @@ return [
     | This is the phone number to use when originating messages/conversations.
     |
     */
-    'sender' => env('CATAPAULT_SENDER'),
+    'sender' => env('CATAPULT_SENDER'),
 ];

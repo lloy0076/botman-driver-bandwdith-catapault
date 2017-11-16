@@ -1,15 +1,15 @@
 {
     "name": "lloy0076/botman-driver-catapault",
     "license": "MIT",
-    "description": "Catapault (Bandwidth) driver for BotMan",
+    "description": "Catapult (Bandwidth) driver for BotMan",
     "keywords": [
         "Bot",
         "BotMan",
-        "Catapault",
+        "Catapult",
         "Bandwidth",
         "Bandwidthcom"
     ],
-    "homepage": "http://github.com/lloy0076/botman-driver-catapault",
+    "homepage": "http://github.com/lloy0076/botman-driver-catapult",
     "authors": [
         {
             "name": "David Lloyd",
@@ -27,7 +27,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DSL\\Drivers\\Catapault\\": "src/"
+            "DSL\\Drivers\\Catapult\\": "src/"
         }
     },
     "autoload-dev": {
