@@ -1,4 +1,4 @@
-# BotMan Nexmo Driver
+# BotMan Catapault Driver
 
 BotMan driver to connect Catapault (Bandwidth) with [BotMan](https://github.com/botman/botman)
 
