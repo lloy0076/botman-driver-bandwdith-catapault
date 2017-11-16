@@ -3,6 +3,6 @@
         "stubs/catapault.php"
     ],
     "botman/driver": [
-        "DSL\\Drivers\\Catapault\\CatapaultDriver"
+        "DSL\\Drivers\\Catapult\\CatapultDriver"
     ]
 }

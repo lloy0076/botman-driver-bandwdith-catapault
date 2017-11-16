@@ -1,6 +1,6 @@
-# BotMan Catapault Driver
+# BotMan Catapult Driver
 
-BotMan driver to connect Catapault (Bandwidth) with [BotMan](https://github.com/botman/botman)
+BotMan driver to connect Catapult (Bandwidth) with [BotMan](https://github.com/botman/botman)
 
 ## Contributing
 
